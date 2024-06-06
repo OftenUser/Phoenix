@@ -3,29 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
-    <title>Desktop Metrics logger with Google Analytics</title>
+    <title>Desktop Metrics Logger With Google Analytics</title>
     <script>
         const SAVED_GOOGLE_ANALYTICS_DESKTOP_KEY = "SAVED_GOOGLE_ANALYTICS_DESKTOP_KEY";
-        let gaReady = false, loadedGoogleAnalyticsID;
+        let googleAnalyticsReady = false, loadedGoogleAnalyticsID;
 
         const url = window.location.href;
         const urlParams = new URLSearchParams(window.location.search);
         const reloadedOnce = urlParams.get('reloadedOnce');
 
         /**
-         * GA doesn't log engagement metrics if the page is in focus. Since we are a hidden page, we will take over
-         * the global event handlers and trigger synthetic focus events to make ga think that it has focus.
+         * Google Analytics doesn't log engagement metrics if the page is in focus. Since we are a hidden page, we will take over
+         * the global event handlers and trigger synthetic focus events to make Google Analytics think that it has focus.
          */
         function patchGlobalFocusHandlers() {
-            let gaFocusCallback, focusCallbackDone;
+            let googleAnalyticsFocusCallback, focusCallbackDone;
             window.savedEventListener = window.addEventListener;
-            savedEventListener('focus', (focusEvent)=>{
-                gaFocusCallback.call(this, focusEvent);
+            
+            savedEventListener('focus', (focusEvent) => {
+                googleAnalyticsFocusCallback.call(this, focusEvent);
                 focusCallbackDone = true;
             });
 
-            window.addEventListener = function (eventName, fn, globalEvFlag) {
-                if(eventName === 'focus'){
+            window.addEventListener = function(eventName, fn, globalEventFlag) {
+                if (eventName === 'focus') {
                     const focusEvent = new Event('focus', {
                         view: window,
                         bubbles: true,
@@ -36,99 +37,115 @@
                         defaultPrevented: false,
                         returnValue: true
                     });
+                    
                     document.body.focus();
-                    setTimeout(()=>{
-                        gaFocusCallback = fn;
-                        // first lets try to trigger the actual saved savedEventListener programmatically
+                    
+                    setTimeout(() => {
+                        googleAnalyticsFocusCallback = fn;
+                        
+                        // First let's try to trigger the actual saved savedEventListener programmatically
                         window.dispatchEvent(focusEvent);
                     }, 500);
-                    setTimeout(()=>{
-                        // the event wasnt generated, so we trigger it manually. This is not preferred as the target and
-                        // other important properties of the event are readonly and cannot be overwritten.
-                        if(!focusCallbackDone){
-                            gaFocusCallback.call(window.document.body, focusEvent);
+                    
+                    setTimeout(() => {
+                        // The event wasn't generated, so we trigger it manually. This is not preferred as the target and
+                        // other important properties of the event are read-only and cannot be overwritten.
+                        if (!focusCallbackDone) {
+                            googleAnalyticsFocusCallback.call(window.document.body, focusEvent);
                         }
                     }, 1000);
-                } else if(eventName === 'blur'){
-                    // swallow this event as ga will not track engagement if not focused.
+                } else if (eventName === 'blur') {
+                    // Swallow this event as Google Analytics will not track engagement if not focused.
                 } else {
-                    window.savedEventListener(eventName, fn, globalEvFlag);
+                    window.savedEventListener(eventName, fn, globalEventFlag);
                 }
             }
         }
+        
         patchGlobalFocusHandlers();
 
         function installGoogleAnalytics() {
-            if(gaReady){
-                return ;
-            }
-            const analyticsID = localStorage.getItem(SAVED_GOOGLE_ANALYTICS_DESKTOP_KEY);
-            if(!analyticsID) {
-                console.error("No analytics id found to init ga, waiting for phcode to send ids to init...");
+            if (googleAnalyticsReady) {
                 return;
             }
+            
+            const analyticsID = localStorage.getItem(SAVED_GOOGLE_ANALYTICS_DESKTOP_KEY);
+            
+            if (!analyticsID) {
+                console.error("No analytics ID found to initialize Google Analytics, waiting for Phcode to send IDs to initialize...");
+                return;
+            }
+            
             loadedGoogleAnalyticsID = analyticsID;
-            // ga primer scripts
+            
+            // Google Analytics primer scripts
             window.dataLayer = window.dataLayer || [];
+            
             window.gtag = function() {
                 window.dataLayer.push(arguments);
-                if(window.dataLayer.length > 500){
-                    window.dataLayer.splice(0, 250); // remove half the elements offline queue guard
+                
+                if (window.dataLayer.length > 500) {
+                    window.dataLayer.splice(0, 250); // Remove half the elements offline queue guard
                 }
             }
 
-            const gaScript = document.createElement('script');
-            gaScript.async = true;
-            gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsID}`;
+            const googleAnalyticsScript = document.createElement('script');
+            googleAnalyticsScript.async = true;
+            googleAnalyticsScript.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsID}`;
             document.head.appendChild(gaScript);
 
             gtag('js', new Date());
             gtag('config', analyticsID);
-            gaReady = true;
+            googleAnalyticsReady = true;
         }
 
         installGoogleAnalytics();
 
         function reloadOnce() {
-            // we have to do this as ga seems to miss points in real time analytics dashboard if ga is not inited
-            // at page load time. So we reload once to make metrics show up in ga real time dashboard.
+            // We have to do this as Google Analytics seems to miss points in real time analytics dashboard if Google Analytics is not initialized
+            // at page load time. So we reload once to make metrics show up in Google Analytics real time dashboard.
             let currentUrl = new URL(window.location);
+            
             if (!currentUrl.searchParams.has('reloadedOnce')) {
                 currentUrl.searchParams.set('reloadedOnce', 'true');
                 window.location.href = currentUrl.href;
             }
         }
 
-
         async function processRequest(event) {
             const payload = event.payload;
-            if(payload.analyticsID && loadedGoogleAnalyticsID !== payload.analyticsID) {
+            
+            if (payload.analyticsID && loadedGoogleAnalyticsID !== payload.analyticsID) {
                 localStorage.setItem(SAVED_GOOGLE_ANALYTICS_DESKTOP_KEY, payload.analyticsID);
                 installGoogleAnalytics();
             }
 
-            for(let eventPayload of payload.events) {
+            for (let eventPayload of payload.events) {
                 gtag('event', eventPayload.eventAct, {
                     'event_category': eventPayload.category,
                     'event_label': eventPayload.label,
                     'value': eventPayload.count
                 });
             }
-            if(!reloadedOnce) {
+            
+            if (!reloadedOnce) {
                 setTimeout(reloadOnce, 1000);
             }
         }
+        
         window.__TAURI__.event.listen("health", processRequest);
-        setInterval(async ()=>{
-            // close window if the metrics hidden window is the only one around.
-            const allTauriWindowsLabels  = await window.__TAURI__.invoke('_get_window_labels');
-            if(allTauriWindowsLabels.length === 1){
+        
+        setInterval(async () => {
+            // Close window if the metrics hidden window is the only one around.
+            const allTauriWindowsLabels = await window.__TAURI__.invoke('_get_window_labels');
+            
+            if (allTauriWindowsLabels.length === 1) {
                 window.__TAURI__.window.getCurrent().close();
             }
         }, 1000);
     </script>
 </head>
 <body>
-Phoenix Desktop Metrics emitter to GA.
+Phoenix Desktop Metrics emitter to Google Analytics.
 </body>
 </html>
