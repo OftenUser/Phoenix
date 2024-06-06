@@ -10,6 +10,7 @@
             height: 100%;
             overflow: hidden;
         }
+        
         iframe {
             width: 100%;
             height: 100%;
@@ -17,7 +18,6 @@
         }
     </style>
     <style>
-
         .outer-container {
             position: fixed;
             top: 0;
@@ -31,8 +31,8 @@
         }
 
         .dialog-container {
-            border: 1px solid #ccc;
-            background-color: #fff;
+            border: 1px solid #CCC;
+            background-color: #FFF;
             padding: 20px;
             box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
             /* Other styles remain the same */
@@ -54,61 +54,64 @@
         button {
             padding: 5px 10px;
             margin-left: 10px;
-            background-color: #eee; /* Light background for buttons */
+            background-color: #EEE; /* Light background for buttons */
             color: #000; /* Dark text for buttons */
-            border: 1px solid #ccc; /* Border for buttons */
+            border: 1px solid #CCC; /* Border for buttons */
         }
 
         /* Dark theme styles */
         @media (prefers-color-scheme: dark) {
 
             .outer-container {
-                background-color: #1e1e1e; /* Dark background for the body */
-                color: #ffffff; /* Light text color for dark theme */
+                background-color: #1E1E1E; /* Dark background for the body */
+                color: #FFFFFF; /* Light text color for dark theme */
             }
 
             .dialog-container {
                 border: 1px solid #444; /* Darker border for the dialog */
-                background-color: #2a2a2a; /* Dark background for the dialog */
+                background-color: #2A2A2A; /* Dark background for the dialog */
             }
 
             button {
-                background-color: #4a4a4a; /* Darker background for buttons */
-                color: #fff; /* Light text for buttons */
-                border: 1px solid #6a6a6a; /* Border for buttons */
+                background-color: #4A4A4A; /* Darker background for buttons */
+                color: #FFF; /* Light text for buttons */
+                border: 1px solid #6A6A6A; /* Border for buttons */
             }
 
             button:hover {
-                background-color: #5a5a5a; /* Lighter background on hover for buttons */
+                background-color: #5A5A5A; /* Lighter background on hover for buttons */
             }
         }
 
     </style>
     <script>
         const TRUSTED_ORIGINS = {
-            'http://localhost:8000': true, // phcode dev server
-            'http://localhost:8001': true, // phcode dev live preview server
-            'http://localhost:5000': true, // playwright tests
-            'http://127.0.0.1:8000': true, // phcode dev server
-            'http://127.0.0.1:8001': true, // phcode dev live preview server
-            'http://127.0.0.1:5000': true, // playwright tests
-            'https://phcode.live': true, // phcode prod live preview server
+            'http://localhost:8000': true, // Phcode dev server
+            'http://localhost:8001': true, // Phcode dev live preview server
+            'http://localhost:5000': true, // Playwright tests
+            'http://127.0.0.1:8000': true, // Phcode dev server
+            'http://127.0.0.1:8001': true, // Phcode dev live preview server
+            'http://127.0.0.1:5000': true, // Playwright tests
+            'https://phcode.live': true, // Phcode prod live preview server
             'https://phcode.dev': true,
             'https://dev.phcode.dev': true,
             'https://staging.phcode.dev': true,
             'https://create.phcode.dev': true
         };
+        
         let okMessageTemplate;
 
         function isTrustedURL(url) {
-            if(!url){
+            if (!url) {
                 return false;
             }
-            for(let trustedUrl of Object.keys(TRUSTED_ORIGINS)){
-                if(url.startsWith(trustedUrl)){
+            
+            for (let trustedUrl of Object.keys(TRUSTED_ORIGINS)) {
+                if (url.startsWith(trustedUrl)) {
                     return true;
                 }
             }
+            
             return false;
         }
 
@@ -119,18 +122,22 @@
         let currentProjectRoot;
 
         function getTrustOkButton() {
-            if(! okMessageTemplate){
+            if (! okMessageTemplate) {
                 return "Trust Project?";
             }
-            if(!currentProjectRoot){
+            
+            if (!currentProjectRoot) {
                 return okMessageTemplate.replace("{0}", "");
             }
+            
             let projectName = currentProjectRoot;
-            if(projectName.endsWith("/")){
+            
+            if (projectName.endsWith("/")) {
                 projectName = projectName.slice(0, -1);
             }
+            
             projectName = projectName.split("/");
-            projectName = projectName[projectName.length-1];
+            projectName = projectName[projectName.length - 1];
             return okMessageTemplate.replace("{0}", projectName);
         }
 
@@ -139,50 +146,64 @@
             const LOG_LIVE_PREVIEW_KEY= "logLivePreview";
             let loggingEnabled = localStorage.getItem(LOG_LIVE_PREVIEW_KEY) || "false";
             const isLoggingEnabled = loggingEnabled.toLowerCase() === 'true';
+            
             function _debugLog(...args) {
-                if(isLoggingEnabled) {
+                if (isLoggingEnabled) {
                     console.log(...args);
                 }
             }
+            
             const LOADER_BROADCAST_ID = `live-preview-loader-${controllingPhoenixInstanceID}`;
             const navigatorChannel = new BroadcastChannel(LOADER_BROADCAST_ID);
             const LIVE_PREVIEW_MESSENGER_CHANNEL = `live-preview-messenger-${controllingPhoenixInstanceID}`;
             const livePreviewChannel = new BroadcastChannel(LIVE_PREVIEW_MESSENGER_CHANNEL);
+            
             navigatorChannel.onmessage = (event) => {
-                _debugLog("Live Preview loader channel: Browser received event from Phoenix: ", JSON.stringify(event.data));
+                _debugLog("Live Preview Loader Channel: Browser received event from Phoenix: ", JSON.stringify(event.data));
                 const type = event.data.type;
                 const dialog = document.getElementById('outer-container');
+                
                 switch (type) {
                     case "INITIAL_URL_NAVIGATE":
                         previewURL = event.data.URL;
-                        if(!securityAlertAcknowledged || event.data.pageLoaderID !== pageLoaderID){
+                        
+                        if (!securityAlertAcknowledged || event.data.pageLoaderID !== pageLoaderID) {
                             return;
                         }
-                        _debugLog("initial URL page: ", previewURL);
-                        // we dont need to check for trusted domain here as the live preview nav channel is only
-                        // accessible by the editor domain phcode.dev/localhost etc. This page will not load any page
-                        // in iframe without explicit permission grant from the editor. same for all uses below
+                        
+                        _debugLog("Initial URL Page: ", previewURL);
+                        // We don't need to check for trusted domain here as the live preview nav channel is only
+                        // accessible by the editor domain Phcode.dev, Localhost, etc. This page will not load any page
+                        // in iframe without explicit permission grant from the editor. Same for all uses below.
                         document.getElementById("previewFrame").src = previewURL;
                         return;
+                        
                     case "REDIRECT_PAGE":
                         previewURL = event.data.URL;
-                        if(!securityAlertAcknowledged){
+                        
+                        if (!securityAlertAcknowledged) {
                             return;
                         }
-                        _debugLog("Loading page: ", previewURL);
-                        if(event.data.force || document.getElementById("previewFrame").src !== previewURL) {
+                        
+                        _debugLog("Loading Page: ", previewURL);
+                        
+                        if (event.data.force || document.getElementById("previewFrame").src !== previewURL) {
                             document.getElementById("previewFrame").src = previewURL;
                         }
+                        
                         return;
+                        
                     case "UPDATE_TITLE_ICON":
                         // The live preview frame will send us its title and favicon for us to set the window
                         // title and favicon. If it is that message, then, set it up
-                        if(event.data.title || event.data.title === '') {
+                        if (event.data.title || event.data.title === '') {
                             document.title = event.data.title;
                         }
-                        if(event.data.faviconBase64){
+                        
+                        if (event.data.faviconBase64) {
                             // Update the favicon
                             let link = document.querySelector("link[rel~='icon']");
+                            
                             if (!link) {
                                 link = document.createElement('link');
                                 link.rel = 'icon';
@@ -190,57 +211,70 @@
                             }
                             link.href = event.data.faviconBase64;
                         }
+                        
                         return;
+                        
                     case "PROJECT_SWITCH":
                         currentProjectRoot = event.data.projectRoot;
                         document.getElementById('okButton').textContent = getTrustOkButton();
-                        if(trustedProjects[currentProjectRoot] && dialog){
+                        
+                        if (trustedProjects[currentProjectRoot] && dialog) {
                             dialog.style.display = 'none';
                             document.getElementById('previewFrame').src = decodeURIComponent(previewURL);
                             securityAlertAcknowledged = true;
                             return;
                         }
+                        
                         securityAlertAcknowledged = false;
-                        _debugLog("Project switched. Disable live preview tabs for security on untrusted project.");
+                        _debugLog("Project switched. Disable Live Preview tabs for security on untrusted project.");
                         document.getElementById("previewFrame").src = 'about:blank';
-                        if(dialog){
+                        
+                        if (dialog) {
                             dialog.style.display = 'flex';
                         }
+                        
                         return;
+                        
                     case 'TAB_LOADER_ONLINE': return; // loop-back message do nothing, this is for phoenix ot process.
                     default:
                     console.error("Unknown live preivew broadcast message received!: ", event);
                 }
             }
-            setInterval(()=>{
-                // send page loader heartbeat
+            
+            setInterval(() => {
+                // Send page loader heartbeat
                 navigatorChannel.postMessage({
                     type: 'TAB_LOADER_ONLINE',
                     pageLoaderID: pageLoaderID,
                     url: previewURL
                 });
             }, 3000);
+            
             navigatorChannel.postMessage({
                 type: 'GET_INITIAL_URL',
                 pageLoaderID: pageLoaderID
             });
+            
             livePreviewChannel.onmessage = (event) => {
-                _debugLog("Live Preview message channel: Browser received event from Phoenix: ", JSON.stringify(event.data));
-                if(event.data.pageLoaderID && event.data.pageLoaderID !== pageLoaderID){
-                    // this message is not for this page loader window.
+                _debugLog("Live Preview Message Channel: Browser received event from Phoenix: ", JSON.stringify(event.data));
+                
+                if (event.data.pageLoaderID && event.data.pageLoaderID !== pageLoaderID) {
+                    // This message is not for this page loader window.
                     return;
                 }
-                // This is intended to the embedded live preview server frame which processes the request. just pass
+                
+                // This is intended to the embedded live preview server frame which processes the request. Just pass.
                 livepreviewServerIframe.contentWindow.postMessage(event.data.data, '*');
             }
+            
             // These messages are sent from either the live preview frame or the server frame.
             window.addEventListener('message', function(event) {
-                // Security check: ensure the message is from the expected domain
+                // Security Check: Ensure the message is from the expected domain
                 if (!TRUSTED_ORIGINS[event.origin]) {
                     return;
                 }
 
-                // this is for phoenix to process, pass it on
+                // This is for Phoenix to process, pass it on
                 livePreviewChannel.postMessage({
                     pageLoaderID: pageLoaderID,
                     data: event.data
@@ -253,18 +287,19 @@
                 document.getElementById('previewFrame').src = decodeURIComponent(previewURL);
                 securityAlertAcknowledged = true;
                 trustedProjects[currentProjectRoot] = true;
-                sessionStorage.setItem(SESSION_SECURITY_CLEAR_KEY+currentProjectRoot, 'true');
+                sessionStorage.setItem(SESSION_SECURITY_CLEAR_KEY + currentProjectRoot, 'true');
             }
 
             document.getElementById('okButton').addEventListener('click', function() {
                 securityOk();
             });
+            
             const SESSION_SECURITY_CLEAR_KEY = "LIVE_PREVIEW_SESSION_SECURITY_CLEAR";
             const isAck = sessionStorage.getItem(SESSION_SECURITY_CLEAR_KEY+currentProjectRoot);
-            if(isAck){
+            
+            if (isAck) {
                 securityOk();
             }
-
         }
 
         function navigateToInitialURL() {
@@ -273,19 +308,21 @@
             const virtualServerURL = queryParams.get('virtualServerURL');
             const localiseMessage = queryParams.get('localMessage');
             const appName = queryParams.get('appName');
-            // do not pass in any live preview initial urls as it can lead to spoofing phcode.dev doamin by just
-            // calling this page.
+            
+            // Do not pass in any Live Preview initial URLs as it can lead to spoofing phcode.dev domain by just calling this page.
             okMessageTemplate = decodeURIComponent(queryParams.get('okMessage'));
             currentProjectRoot = queryParams.get('initialProjectRoot');
 
-            if(!phoenixInstanceID || !virtualServerURL || !appName){
-                console.error("Expected required query strings: phoenixInstanceID, virtualServerURL, appName");
+            if (!phoenixInstanceID || !virtualServerURL || !appName) {
+                console.error("Expected Required Query Strings: phoenixInstanceID, virtualServerURL, appName");
                 return;
             }
+            
             setupNavigationWatcher(phoenixInstanceID);
             let livepreviewServerIframe = document.getElementById("live-preview-server-iframe");
             let serverURL = `${decodeURIComponent(virtualServerURL)}?parentOrigin=${location.origin}`;
-            if(isTrustedURL(serverURL)) {
+            
+            if (isTrustedURL(serverURL)) {
                 livepreviewServerIframe.setAttribute("src", serverURL);
             }
 
@@ -293,7 +330,6 @@
             localiseMessage && (document.getElementById('dialog-message').textContent = decodeURIComponent(localiseMessage));
             appName && (document.getElementById('appName').textContent = decodeURIComponent(appName));
         }
-
     </script>
 </head>
 <body onload="navigateToInitialURL()">
@@ -304,20 +340,20 @@
                 You are about to open an HTML file for live preview. Please proceed only if you trust the source of this project. Click 'OK' to continue, or close this window if you do not trust the source.
             </div>
             <div class="dialog-buttons">
-                <button id="okButton">Trust Project</button>
+                <button id="okButton" style="cursor: pointer;" title="Trust Project">Trust Project</button>
             </div>
         </div>
     </div>
 
     <iframe id="live-preview-server-iframe"
-            title="live preview server"
+            title="Live Preview Server"
             src="about:blank"
-            style="width:100%;"
+            style="width: 100%;"
             sandbox="allow-same-origin allow-scripts"
             hidden>
     </iframe>
     <iframe id="previewFrame"
-            title="live preview"
+            title="Live Preview"
             src="about:blank"
             sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms allow-modals allow-pointer-lock allow-downloads">
     </iframe>
