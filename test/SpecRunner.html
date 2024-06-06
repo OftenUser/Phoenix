@@ -499,13 +499,13 @@
         location.appendChild(scriptTag);
       };
       function _requireDone() {
-        // do nothing
+        // Do nothing
       }
-      const interval = setInterval(()=>{
-        if(PhStore){
+      const interval = setInterval(() => {
+        if (PhStore) {
           clearInterval(interval);
           PhStore.storageReadyPromise
-                  .finally(()=>{
+                  .finally(() => {
                     loadJS('../src/thirdparty/requirejs/require.js', _requireDone, document.body, "SpecRunner");
                   });
         }
@@ -515,7 +515,7 @@
   </script>
 </head>
 
-<body style="user-select: text !important; display: flex" onload="init()">
+<body style="user-select: text !important; display: flex;" onload="init()">
     <div class="navbar navbar-fixed-top" style="padding-top: 0;">
       <div class="navbar-inner" style="width: 100%;">
         <div class="container" style="width: 100%;">
@@ -526,35 +526,35 @@
           </a>
 
           <div class="nav-collapse">
-            <span class="brand" href="#">Brackets Tests</span>
+            <span class="brand" href="#" title="Brackets Tests">Brackets Tests</span>
             <ul class="nav">
-              <li><a id="all" href="?category=all">All</a></li>
-              <li><a id="unit" href="?category=unit">Unit</a></li>
-              <li><a id="integration" href="?category=integration">Integration</a></li>
-              <li><a id="LegacyInteg" href="?category=LegacyInteg">LegacyInteg</a></li>
-              <li><a id="livepreview" href="?category=livepreview">Live&nbsp;Preview</a></li>
-              <li><a id="mainview"    href="?category=mainview">Main&nbsp;View</a></li>
-              <li><a id="performance" href="?category=performance">Performance</a></li>
-              <li><a id="extension" href="?category=extension">Extensions</a></li>
-              <li><a id="individualrun" href="?category=individualrun">Individual Run</a></li>
-              <li><a id="reload" href="#">Reset and Reload Tests</a></li>
-              <li><a id="show-report-to-copy" href="#">Toggle Printable Report</a></li>
+              <li><a id="all" href="?category=all" title="All">All</a></li>
+              <li><a id="unit" href="?category=unit" title="Unit">Unit</a></li>
+              <li><a id="integration" href="?category=integration" title="Integration">Integration</a></li>
+              <li><a id="LegacyInteg" href="?category=LegacyInteg" title="LegacyInteg">LegacyInteg</a></li>
+              <li><a id="livepreview" href="?category=livepreview" title="Live Preview">Live&nbsp;Preview</a></li>
+              <li><a id="mainview" href="?category=mainview" title="Main View">Main&nbsp;View</a></li>
+              <li><a id="performance" href="?category=performance" title="Performance">Performance</a></li>
+              <li><a id="extension" href="?category=extension" title="Extensions">Extensions</a></li>
+              <li><a id="individualrun" href="?category=individualrun" title="Individual Run">Individual Run</a></li>
+              <li><a id="reload" href="#" title="Reset And Reload Tests">Reset And Reload Tests</a></li>
+              <li><a id="show-report-to-copy" href="#" title="Toggle Printable Report">Toggle Printable Report</a></li>
             </ul>
             <select name="Simulate OS" id="os-select" style="width: 100px;">
-              <option value="Simulate OS: None">Simulate OS</option>
-              <option value="none">None</option>
-              <option value="win">Windows</option>
-              <option value="linux">Linux</option>
-              <option value="mac">Mac</option>
+              <option value="Simulate OS: None" title="Simulate OS">Simulate OS</option>
+              <option value="none" title="None">None</option>
+              <option value="win" title="Windows">Windows</option>
+              <option value="linux" title="Linux">Linux</option>
+              <option value="mac" title="Mac">Mac</option>
             </select>
           </div>
         </div>
       </div>
     </div>
-    <div id="printableReport" class="forced-hidden" style="margin-top: 30px;overflow: scroll;width: 100%; height: 94%;">
-      <button id="copyReportButton"> Copy Report</button>
-      <button id="copyReportErrorsButton"> Copy Error Report</button>
-      <button id="copyFullReportButton"> Copy Full Report</button>
+    <div id="printableReport" class="forced-hidden" style="margin-top: 30px; overflow: scroll; width: 100%; height: 94%;">
+      <button id="copyReportButton" title="Copy Report"> Copy Report</button>
+      <button id="copyReportErrorsButton" title="Copy Error Report"> Copy Error Report</button>
+      <button id="copyFullReportButton" title="Copy Full Report"> Copy Full Report</button>
     </div>
     <div id="loading" style="display: none; margin-top: 100px;">
       Please run <code>npm run build</code> before starting tests at least once or if you are facing issues.
@@ -562,14 +562,14 @@
     </div>
     <div id="phoenixIframeContainer" class="forced-hidden">
       <div id="phoenixControlBar">
-        <button onclick="_reloadIframeRunner()">Reload</button>
+        <button onclick="_reloadIframeRunner()" title="Reload">Reload</button>
         &nbsp;&nbsp;&nbsp;
-        <button onclick="_disposeIframeRunner()">Dispose</button>
+        <button onclick="_disposeIframeRunner()" title="Dispose">Dispose</button>
         &nbsp;&nbsp;&nbsp;
-        <button onclick="closeIframeRunner()">x</button>
+        <button onclick="closeIframeRunner()" title="Close">X</button>
       </div>
     </div>
-    <div id="mock-main-view" style="position:absolute; height:1000px; width:1000px; left:-10000px; top:-10000px;"></div>
+    <div id="mock-main-view" style="position: absolute; width: 1000px; height: 1000px; left: -10000px; top: -10000px;"></div>
     <div id="toast-notification-container">
     </div>
 </body>
