@@ -20,7 +20,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: var(--sansFontFamily) ;
+    font-family: var(--sansFontFamily);
     font-size: 22px;
 }
 
@@ -46,7 +46,7 @@ img {
 }
 
 #mainDiv {
-    color: #ffffffef;
+    color: #FFFFFFEF;
     top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -54,8 +54,8 @@ img {
     z-index: 8;
     align-items: center;
     justify-content: center;
-    display: flex!important;
-    flex-direction: column!important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 #logo {
@@ -63,12 +63,11 @@ img {
     vertical-align: middle;
     border-style: none;
     box-sizing: border-box;
-
 }
 
 #MainText {
-    color: #ffffffef;
-    text-align: center!important;
+    color: #FFFFFFEF;
+    text-align: center !important;
 }
 
 h1 {
@@ -81,14 +80,14 @@ h1 {
 .primary-button {
     padding: 5px 25px 5px 25px;
     background: linear-gradient(90deg, #FAAA47 0%, #FA1801 100%);
-    font-family: var(--sansFontFamily) ;
+    font-family: var(--sansFontFamily);
     font-size: 18px;
     font-weight: bold;
     background-size: 200% 200%;
     border-radius: 5px;
     border: none;
     outline: none;
-    color: #ffffffef;
+    color: #FFFFFFEF;
     cursor: pointer;
     box-shadow: 0 0 0 #FAAA47;
     transition:2s background-color;
@@ -100,13 +99,19 @@ h1 {
     cursor: pointer;
 }
 
-
 @keyframes Animation {
-    0%{background-position:0% 0%}
-    50%{background-position:100% 0%}
-    100%{background-position:0% 0%}
+    0% {
+        background-position: 0% 0%;
+    }
+    
+    50% {
+        background-position: 100% 0%;
+    }
+    
+    100% {
+        background-position: 0% 0%;
+    }
 }
-
 
 .clouds {
     position: absolute;
