@@ -10,6 +10,7 @@
             height: 100%;
             overflow: hidden;
         }
+        
         iframe {
             width: 100%;
             height: 100%;
@@ -33,10 +34,13 @@
             if (bufferData instanceof ArrayBuffer) {
                 metadata.hasBufferData = true;
             }
+            
             bufferData = bufferData || new ArrayBuffer(0);
+            
             if (typeof metadata !== 'object') {
-                throw new Error("metadata should be an object, but was " + typeof metadata);
+                throw new Error("Metadata should be an object, but was " + typeof metadata);
             }
+            
             if (!(bufferData instanceof ArrayBuffer)) {
                 throw new Error("Expected bufferData to be an instance of ArrayBuffer, but was " + typeof bufferData);
             }
@@ -58,6 +62,7 @@
 
             // Copy the metadataUint8Array and bufferData (if provided) to the concatenatedUint8Array
             concatenatedUint8Array.set(metadataUint8Array, sizePrefixLength);
+            
             if (bufferData.byteLength > 0) {
                 concatenatedUint8Array.set(new Uint8Array(bufferData), sizePrefixLength + metadataBuffer.byteLength);
             }
@@ -66,19 +71,22 @@
         }
 
         function splitMetadataAndBuffer(concatenatedBuffer) {
-            if(!(concatenatedBuffer instanceof ArrayBuffer)){
+            if (!(concatenatedBuffer instanceof ArrayBuffer)) {
                 throw new Error("Expected ArrayBuffer message from websocket");
             }
+            
             const sizePrefixLength = 4;
             const buffer1Length = new DataView(concatenatedBuffer).getUint32(0, true); // Little endian
 
             const buffer1 = concatenatedBuffer.slice(sizePrefixLength, sizePrefixLength + buffer1Length);
             const metadata = JSON.parse(new TextDecoder().decode(buffer1));
             let buffer2;
+            
             if (concatenatedBuffer.byteLength > sizePrefixLength + buffer1Length) {
                 buffer2 = concatenatedBuffer.slice(sizePrefixLength + buffer1Length);
             }
-            if(!buffer2 && metadata.hasBufferData) {
+            
+            if (!buffer2 && metadata.hasBufferData) {
                 // This happens if the sender is sending 0 length buffer. So we have to create an empty buffer here
                 buffer2 = new ArrayBuffer(0);
             }
@@ -102,7 +110,7 @@
 
         function setupNavigationWatcher(wssEndpoint) {
             function _debugLog(...args) {
-                if(isLoggingEnabled) {
+                if (isLoggingEnabled) {
                     console.log(...args);
                 }
             }
@@ -110,15 +118,17 @@
             _debugLog("navigation websocket url: ", wssEndpoint);
             let ws = new WebSocket(wssEndpoint);
             ws.binaryType = 'arraybuffer';
-            ws.addEventListener("open", () =>{
-                _debugLog("navigation websocket opened", wssEndpoint);
+            ws.addEventListener("open", () => {
+                _debugLog("Navigation websocket opened", wssEndpoint);
+                
                 ws.send(mergeMetadataAndArrayBuffer({
                     type: 'CHANNEL_TYPE',
                     channelName: 'navigationChannel',
                     pageLoaderID: pageLoaderID
                 }));
-                setInterval(()=>{
-                    // send page loader heartbeat
+                
+                setInterval(() => {
+                    // Send page loader heartbeat
                     ws.send(mergeMetadataAndArrayBuffer({
                         type: 'TAB_LOADER_ONLINE',
                         pageLoaderID: pageLoaderID,
@@ -127,42 +137,50 @@
                 }, 3000);
             });
 
-            ws.addEventListener('message', function (event) {
+            ws.addEventListener('message', function(event) {
                 const message = event.data;
                 const {metadata} = splitMetadataAndBuffer(message);
-                _debugLog("Live Preview socket channel: Browser received event from Phoenix: ", metadata);
+                _debugLog("Live Preview Socket Channel: Browser received event from Phoenix: ", metadata);
                 const type = metadata.type;
+                
                 switch (type) {
                     case "REDIRECT_PAGE":
                         previewURL = metadata.URL;
                         const processURL = new URL(previewURL);
-                        if(processURL.searchParams.get(PHCODE_LIVE_PREVIEW_QUERY_PARAM) === "true"){
-                            // this is an html live preview directly controlled by phcode that has inbuilt navigator.
+                        
+                        if (processURL.searchParams.get(PHCODE_LIVE_PREVIEW_QUERY_PARAM) === "true") {
+                            // This is an HTML live preview directly controlled by Phcode that has inbuilt navigator.
                             location.href = previewURL;
                             return;
                         }
-                        _debugLog("Loading page: ", previewURL);
-                        if(metadata.force || document.getElementById("previewFrame").src !== previewURL) {
+                        
+                        _debugLog("Loading Page: ", previewURL);
+                        
+                        if (metadata.force || document.getElementById("previewFrame").src !== previewURL) {
                             document.getElementById("previewFrame").src = previewURL;
                             document.title = extractFilename(previewURL);
                         }
+                        
                         return;
+                        
                     case "PROJECT_SWITCH":
                         document.getElementById("previewFrame").src = 'phoenix-splash/no-preview.html';
                         document.title = "no-preview.html";
                         return;
-                    case 'TAB_LOADER_ONLINE': return; // loop-back message do nothing, this is for phoenix ot process.
+                        
+                    case 'TAB_LOADER_ONLINE': return; // Loop-back message do nothing, this is for phoenix ot process.
+                        
                     default:
-                        console.error("Unknown live preivew navigation message received!: ", metadata);
+                        console.error("Unknown Live Preview Navigation Message Received: ", metadata);
                 }
             });
 
-            ws.addEventListener('error', function (event) {
-                console.error("navigation websocket error event: ", event);
+            ws.addEventListener('error', function(event) {
+                console.error("Navigation Websocket Error Event: ", event);
             });
 
-            ws.addEventListener('close', function () {
-                _debugLog("navigation websocket closed");
+            ws.addEventListener('close', function() {
+                _debugLog("Navigation Websocket Closed");
             });
         }
 
@@ -172,10 +190,11 @@
             const livePreviewCommURL = queryParams.get('livePreviewCommURL');
             isLoggingEnabled = (queryParams.get('isLoggingEnabled') === 'true');
 
-            if(!livePreviewCommURL || !initialURL){
+            if (!livePreviewCommURL || !initialURL) {
                 console.error("Expected required query strings: livePreviewCommURL, initialURL");
                 return;
             }
+            
             setupNavigationWatcher(livePreviewCommURL);
             previewURL = decodeURIComponent(initialURL);
             document.getElementById("previewFrame").src = previewURL;
@@ -186,7 +205,7 @@
 </head>
 <body onload="navigateToInitialURL()">
     <iframe id="previewFrame"
-            title="live preview"
+            title="Live Preview"
             sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms allow-modals allow-pointer-lock allow-downloads">
     </iframe>
 </body>
