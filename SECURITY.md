@@ -7,13 +7,13 @@
 | > 1.0   | :white_check_mark: |
 | < 1.0   | :x:                |
 
-## Reporting a Vulnerability
+## Reporting A Vulnerability
 
 If you have found a potential security threat, vulnerability or exploit in Phoenix Code Editor
 or one of its upstream dependencies, please DON’T create a pull-request, DON’T
 file an issue on GitHub, DON’T mention it on Discord and DON’T create a forum thread.
 
-Please submit your report via the [GitHub Private Vulnerability Disclosure functionality](https://github.com/phcode-dev/phoenix/security/advisories/new).
+Please submit your report via the <a href="https://github.com/phcode-dev/phoenix/security/advisories/new" target="_blank" title="GitHub Private Vulnerability Disclosure Functionality">GitHub Private Vulnerability Disclosure Functionality</a>.
 
 Find out more about the reporting process [here](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).
 
