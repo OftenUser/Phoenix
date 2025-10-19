@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Enable Phoenix development site</title>
+        <title>Enable Phoenix Development Site</title>
         <link rel="stylesheet" href="styles.css" />
         <script>
             function showDebugStatuses(localStorageKey, descriptionID, buttonID) {
@@ -10,7 +10,7 @@
                     statusMessage = `Debug logs for ${localStorageKey} are currently Disabled`,
                     btnMessage = `Enable debug logs for ${localStorageKey}`,
                     color = "red";
-                if(enabled){
+                if (enabled) {
                     statusMessage = `Debug logs for ${localStorageKey} are currently Enabled`;
                     btnMessage = `Disable debug logs for ${localStorageKey}`;
                     color = "green";
@@ -19,6 +19,8 @@
                 document.getElementById(descriptionID).textContent = statusMessage;
                 document.getElementById(descriptionID).style.color = color;
                 document.getElementById(buttonID).textContent = btnMessage;
+                document.getElementById(buttonID).title = btnMessage;
+                document.getElementById(buttonID).style.cursor = "pointer";
             }
 
             function showEnabledStatus() {
@@ -26,7 +28,7 @@
                     statusMessage = `Dev site at ${location.hostname} is currently Disabled`,
                     btnMessage = `Enable ${location.hostname}`,
                     color = "red";
-                if(enabled){
+                if (enabled) {
                     statusMessage = `Dev site at ${location.hostname} is currently Enabled`;
                     btnMessage = `Disable ${location.hostname}`;
                     color = "green";
@@ -35,6 +37,8 @@
                 document.getElementById("enableStatus").textContent = statusMessage;
                 document.getElementById('enableStatus').style.color = color;
                 document.getElementById("enableBtn").textContent = btnMessage;
+                document.getElementById("enableBtn").title = btnMessage;
+                document.getElementById("enableBtn").style.cursor = "pointer";
                 showDebugStatuses("logToConsole", "enableStatusDebugLogs", "enableBtnDebugLogs");
                 showDebugStatuses("logLivePreview", "enableStatusDebugLivePreview", "enableBtnDebugLivePreview");
             }
@@ -47,19 +51,19 @@
         </script>
     </head>
     <body onload="showEnabledStatus()">
-        <h1 id="heading">Enable or Disable Phoenix Dev site.</h1>
+        <h1 id="heading">Enable Or Disable Phoenix Dev Site.</h1>
         <div id="enableStatus">Checking if dev site is enabled...</div>
-        <br />
-        <button id="enableBtn" onclick="toggleLocalStorageItem('devDomainsEnabled')">Click me</button>
+        <br>
+        <button id="enableBtn" onclick="toggleLocalStorageItem('devDomainsEnabled')" style="cursor: pointer;" title="Click Me">Click Me</button>
 
-        <h2>Enable or disable debug logs.</h2>
+        <h2>Enable Or Disable Debug Logs.</h2>
         <div id="enableStatusDebugLogs">Checking if debug logs are enabled...</div>
-        <br />
-        <button id="enableBtnDebugLogs" onclick="toggleLocalStorageItem('logToConsole')">Click me</button>
+        <br>
+        <button id="enableBtnDebugLogs" onclick="toggleLocalStorageItem('logToConsole')" style="cursor: pointer;" title="Click Me">Click Me</button>
 
         <h2>Enable or disable debug live preview logs.</h2>
         <div id="enableStatusDebugLivePreview">Checking if debug logs are enabled...</div>
         <br />
-        <button id="enableBtnDebugLivePreview" onclick="toggleLocalStorageItem('logLivePreview')">Click me</button>
+        <button id="enableBtnDebugLivePreview" onclick="toggleLocalStorageItem('logLivePreview')" style="cursor: pointer;" title="Click Me">Click Me</button>
     </body>
 </html>
