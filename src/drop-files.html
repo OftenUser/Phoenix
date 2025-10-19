@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -8,7 +8,7 @@
         let windowLabelOfListener, dropMessage, dropProjectMessage, dropMessageOneFile, platform;
         window.__TAURI__.event.listen('tauri://file-drop', (event) => {
             __TAURI__.window.appWindow.hide();
-            if(!event || !event.payload || !event.payload.length || !windowLabelOfListener){
+            if (!event || !event.payload || !event.payload.length || !windowLabelOfListener) {
                 return;
             }
             window.__TAURI__.event.emit('file-drop-event-phoenix', {
@@ -24,7 +24,7 @@
             // happen in windows as tauri has a custom hwnd window overlay over this dop window and appear
             // to be swallowing the mouse out events. So we listen to tauri's drop cancelled event instead
             // on windows only.
-            if(platform === "win") {
+            if (platform === "win") {
                 // in windows, tauri drop work differently, we have to do this to prevent the drop window not
                 // disappearing on mouse out.
                 __TAURI__.window.appWindow.hide();
@@ -34,25 +34,25 @@
             __TAURI__.window.appWindow.hide();
         });
         window.__TAURI__.event.listen('tauri://file-drop-hover', (event) => {
-            if(!event || !event.payload || !dropProjectMessage || !dropMessage){
+            if (!event || !event.payload || !dropProjectMessage || !dropMessage) {
                 return;
             }
-            if(event.payload.length === 1) {
+            if (event.payload.length === 1) {
                 window.__TAURI__.fs.readDir(event.payload[0])
-                    .then(async ()=>{
-                        // if a single folder is present, we treat it as drop project
+                    .then(async () => {
+                        // If a single folder is present, we treat it as drop project
                         document.getElementById("dropMessage").innerText = dropProjectMessage
                             .replace("{0}", await window.__TAURI__.path.basename(event.payload[0]));
-                    }).catch(()=>{
+                    }).catch(() => {
                     document.getElementById("dropMessage").innerText = dropMessageOneFile;
                 })
             } else {
                 document.getElementById("dropMessage").innerText = dropMessage;
             }
         });
-        window.__TAURI__.event.listen("drop-attach-on-window", ({payload})=> {
+        window.__TAURI__.event.listen("drop-attach-on-window", ({payload}) => {
             document.getElementById("projectName").innerText = payload.projectName;
-            // dropMessage will be set on drag hover events depending on file/files/project
+            // DropMessage will be set on drag hover events depending on file/files/project
             dropMessage = payload.dropMessage;
             dropProjectMessage = payload.dropProjectMessage;
             dropMessageOneFile = payload.dropMessageOneFile;
@@ -62,10 +62,10 @@
 
         // The below code is commented as it was causing flicker issues in some platforms. IF adding these below
         // event handlers, tread carefully.
-        // window.addEventListener('dragleave', ()=>{
+        // window.addEventListener('dragleave', () => {
         //     //__TAURI__.window.appWindow.hide();
         // });
-        // window.addEventListener('dragend', ()=>{
+        // window.addEventListener('dragend', () => {
         //     //__TAURI__.window.appWindow.hide();
         // });
         // document.addEventListener('visibilitychange', () => {
@@ -74,7 +74,7 @@
         //     }
         // });
         setInterval(async ()=>{
-            // close window if the metrics hidden window and file drop window is the only one around.
+            // Close window if the metrics hidden window and file drop window is the only one around.
             const allTauriWindowsLabels  = await window.__TAURI__.invoke('_get_window_labels');
             if(allTauriWindowsLabels.length === 2 || allTauriWindowsLabels.length === 1){
                 window.__TAURI__.window.getCurrent().close();
@@ -93,7 +93,7 @@
             height: 100%;
             font-family: Arial, sans-serif;
             background-color: #212123;
-            color: #ffffff; /* Default text color */
+            color: #FFFFFF; /* Default text color */
         }
 
         .container {
@@ -114,7 +114,7 @@
 
         header h1 {
             font-size: 2rem;
-            color: #cccccc;
+            color: #CCCCCC;
             text-align: center;
         }
 
@@ -133,14 +133,14 @@
 
         .drop-area .icon {
             font-size: 3rem;
-            color: #aaaaaa;
+            color: #AAAAAA;
             margin-bottom: 20px;
         }
 
         .drop-area p {
             text-align: center;
             font-size: 1.2rem;
-            color: #cccccc;
+            color: #CCCCCC;
         }
     </style>
 </head>
