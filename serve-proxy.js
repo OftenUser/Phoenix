@@ -187,12 +187,12 @@ function serveStaticFile(req, res, filePath) {
                         const html = `
                             <!DOCTYPE html>
                             <html>
-                            <head><title>Directory listing</title></head>
+                            <head><title>Directory Listing</title></head>
                             <body>
-                                <h1>Directory listing for ${req.url}</h1>
+                                <h1>Directory Listing For ${req.url}</h1>
                                 <ul>
                                     ${files.map(file => 
-                                        `<li><a href="${path.join(req.url, file)}">${file}</a></li>`
+                                        `<li><a href="${path.join(req.url, file)}" title="${file}">${file}</a></li>`
                                     ).join('')}
                                 </ul>
                             </body>
