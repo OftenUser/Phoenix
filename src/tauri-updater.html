@@ -24,14 +24,14 @@
         };
         let status = UPDATE_STATUS.STARTED;
         let progressPercent = 0, fileSize = 0, installerLocation;
-        window.__TAURI__.event.listen("updateCommands", (receivedEvent)=> {
+        window.__TAURI__.event.listen("updateCommands", (receivedEvent) => {
             console.log("Updater received Event updateCommands", receivedEvent);
             const {command, data} = receivedEvent.payload;
-            if(command === UPDATE_COMMANDS.GET_STATUS){
+            if (command === UPDATE_COMMANDS.GET_STATUS) {
                 sendUpdateEvent(UPDATE_EVENT.STATUS, status);
-            } else if(command === UPDATE_COMMANDS.GET_DOWNLOAD_PROGRESS){
+            } else if (command === UPDATE_COMMANDS.GET_DOWNLOAD_PROGRESS) {
                 sendUpdateEvent(UPDATE_EVENT.DOWNLOAD_PROGRESS, {progressPercent, fileSize});
-            } else if(command === UPDATE_COMMANDS.GET_INSTALLER_LOCATION){
+            } else if (command === UPDATE_COMMANDS.GET_INSTALLER_LOCATION) {
                 sendUpdateEvent(UPDATE_EVENT.INSTALLER_LOCATION, installerLocation);
             }
         });
@@ -47,28 +47,28 @@
         }
 
         async function updateLinux() {
-            // the actual install happens at app quit, since there is nothing to download at this stage,
-            // we just return a downloaded flag so that the ui can show a dialog to the user.
+            // The actual install happens at app quit, since there is nothing to download at this stage,
+            // We just return a downloaded flag so that the ui can show a dialog to the user.
             status = UPDATE_STATUS.INSTALLER_DOWNLOADED;
             installerLocation = "onlineInstaller";
             sendUpdateEvent(UPDATE_EVENT.STATUS, UPDATE_STATUS.INSTALLER_DOWNLOADED);
         }
 
         async function downloadUpdate() {
-            const EVENT_PROGRESS= "progress:";
-            const EVENT_INSTALL_PATH= "InstallerPath,";
+            const EVENT_PROGRESS = "progress:";
+            const EVENT_INSTALL_PATH = "InstallerPath,";
             const downloadURL = decodeURIComponent(getQueryStringParam('downloadURL'));
             const appdataDir = await window.__TAURI__.path.appLocalDataDir();
             console.log('InstallerDownloadURL:', downloadURL);
             const argJson = JSON.stringify({downloadURL, appdataDir});
             window.__TAURI__.path.resolveResource("src-node/installer/download-file.js")
-                .then(async nodeSrcPath=>{
+                .then(async nodeSrcPath => {
                     // this is not supposed to work in linux.
                     const argsArray = [nodeSrcPath, argJson];
                     const command = window.__TAURI__.shell.Command.sidecar('phnode', argsArray);
                     command.on('close', data => {
-                        console.log(`PhNode: command finished with code ${data.code} and signal ${data.signal}`);
-                        if(data.code !== 0) {
+                        console.log(`PhNode: Command finished with code ${data.code} and signal ${data.signal}`);
+                        if (data.code !== 0) {
                             status = UPDATE_STATUS.FAILED;
                             sendUpdateEvent(UPDATE_EVENT.LOG_ERROR, "Download Error: " + downloadURL);
                             sendUpdateEvent(UPDATE_EVENT.STATUS, UPDATE_STATUS.FAILED);
@@ -78,33 +78,33 @@
                         sendUpdateEvent(UPDATE_EVENT.STATUS, UPDATE_STATUS.INSTALLER_DOWNLOADED);
                     });
                     command.on('error', error => {
-                        console.error(`PhNode: command error: "${error}"`);
+                        console.error(`PHNode: Command error: "${error}"`);
                         status = UPDATE_STATUS.FAILED;
                         sendUpdateEvent(UPDATE_EVENT.LOG_ERROR, "Download Error: " + downloadURL);
                         sendUpdateEvent(UPDATE_EVENT.STATUS, UPDATE_STATUS.FAILED);
                     });
                     command.stdout.on('data', line => {
                         console.log(`PhNode: ${line}`);
-                        if(line.startsWith(EVENT_PROGRESS)){
+                        if (line.startsWith(EVENT_PROGRESS)) {
                             progressPercent = parseInt(line.split(":")[1].trim());
                             fileSize = parseInt(line.split(":")[2].trim());
                             sendUpdateEvent(UPDATE_EVENT.DOWNLOAD_PROGRESS, {progressPercent, fileSize});
-                        } else if(line.startsWith(EVENT_INSTALL_PATH)){
+                        } else if (line.startsWith(EVENT_INSTALL_PATH)) {
                             installerLocation = line.split(",")[1].trim();
                             console.log("Final installer location is: ", installerLocation);
                             sendUpdateEvent(UPDATE_EVENT.INSTALLER_LOCATION, installerLocation);
                         }
                     });
-                    command.stderr.on('data', line => console.error(`PhNode: ${line}`));
+                    command.stderr.on('data', line => console.error(`PHNode: ${line}`));
                     command.spawn();
                 });
         }
 
         async function update() {
             const platform = await __TAURI__.os.platform();
-            if(platform === 'linux'){
+            if (platform === 'linux') {
                 await updateLinux();
-            } else if(platform === 'win32' || platform === 'darwin'){
+            } else if (platform === 'win32' || platform === 'darwin') {
                 await downloadUpdate();
             } else {
                 status = UPDATE_STATUS.FAILED_UNKNOWN_OS;
