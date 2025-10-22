@@ -6,7 +6,7 @@
   <script>
     function translate() {
       const urlParams = new URLSearchParams(window.location.search || "");
-      if(urlParams.get('jsonInput')){
+      if (urlParams.get('jsonInput')) {
         let input = JSON.parse(decodeURIComponent(urlParams.get('jsonInput')));
         document.getElementById("heading").textContent = input.heading;
         document.getElementById("details").textContent = input.details;
@@ -16,19 +16,19 @@
 </head>
 
 <body onload="translate()">
-<img id="starsLeft"  src="images/stars-left.svg"/>
+<img id="starsLeft" src="images/stars-left.svg" alt="Stars">
 <div id="mainDiv" style="top: 50%">
   <div id="MainText">
-    <h1 id="heading">Nothing to preview!</h1>
+    <h1 id="heading">Nothing To Preview!</h1>
     <p id="details">Please select an HTML file to preview</p>
   </div>
 </div>
-<img id="cloudLeftTop"  src="images/vector-top-left.png"/>
-<img id="cloudBottomRight"  src="images/vector-bottom-right.png"/>
-<img id="starsRight"  src="images/stars-right.svg"/>
-<img class="clouds" style="z-index: 3; transform: translate(0px, -1.55909px);" src="images/cloud1.svg"/>
-<img class="clouds" style="z-index: 6; transform: translate(0px, -2.33863px);" src="images/cloud2.svg"/>
-<img class="clouds" style="z-index: 5; transform: translate(0px, -3.89772px);" src="images/cloud3.svg"/>
-<img class="clouds" style="z-index: 6; transform: translate(0px, -3.89772px);" src="images/cloud4.svg"/>
+<img id="cloudLeftTop" src="images/vector-top-left.png" alt="Cloud">
+<img id="cloudBottomRight" src="images/vector-bottom-right.png" alt="Cloud">
+<img id="starsRight" src="images/stars-right.svg" alt="Stars">
+<img class="clouds" style="z-index: 3; transform: translate(0px, -1.55909px);" src="images/cloud1.svg" alt="Clouds">
+<img class="clouds" style="z-index: 6; transform: translate(0px, -2.33863px);" src="images/cloud2.svg" alt="Clouds">
+<img class="clouds" style="z-index: 5; transform: translate(0px, -3.89772px);" src="images/cloud3.svg" alt="Clouds">
+<img class="clouds" style="z-index: 6; transform: translate(0px, -3.89772px);" src="images/cloud4.svg" alt="Clouds">
 </body>
 </html>
