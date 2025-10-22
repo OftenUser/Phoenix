@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Phoenix editor</title>
+        <title>Phoenix Editor</title>
         <link rel="stylesheet" href="styles.css">
         <script type="text/javascript">
             function applyTranslations() {
                 const urlSearchParams = new URLSearchParams(window.location.search);
                 const params = Object.fromEntries(urlSearchParams.entries());
-                if(params.mainHeading){
+                if (params.mainHeading) {
                     document.getElementById("mainHeading").innerHTML = decodeURIComponent(params.mainHeading);
                 }
-                if(params.mainSpan){
+                if (params.mainSpan) {
                     document.getElementById("mainSpan").innerHTML = decodeURIComponent(params.mainSpan);
                 }
             }
@@ -18,9 +18,9 @@
     </head>
 
     <body onload="applyTranslations()">
-        <img id="starsLeft"  src="images/stars-left.svg"/>
+        <img id="starsLeft" src="images/stars-left.svg" alt="Stars">
         <div id="mainDiv">
-            <img id="logo"  src="images/phoenix-logo-broken.svg"/>
+            <img id="logo" src="images/phoenix-logo-broken.svg" alt="Phoenix Error">
             <div id="MainText" class="safari-text">
                 <h2 id="mainHeading">Uh Oh! <br>Something went wrong.</h2>
                 <span id="mainSpan">
@@ -28,12 +28,12 @@
                 </span><br>
             </div>
         </div>
-        <img id="cloudLeftTop"  src="images/vector-top-left.png"/>
-        <img id="cloudBottomRight"  src="images/vector-bottom-right.png"/>
-        <img id="starsRight"  src="images/stars-right.svg"/>
-        <img class="clouds" style="z-index: 3; transform: translate(0px, -1.55909px);" src="images/cloud1.svg"/>
-        <img class="clouds" style="z-index: 6; transform: translate(0px, -2.33863px);" src="images/cloud2.svg"/>
-        <img class="clouds" style="z-index: 5; transform: translate(0px, -3.89772px);" src="images/cloud3.svg"/>
-        <img class="clouds" style="z-index: 6; transform: translate(0px, -3.89772px);" src="images/cloud4.svg"/>
+        <img id="cloudLeftTop" src="images/vector-top-left.png" alt="Cloud">
+        <img id="cloudBottomRight" src="images/vector-bottom-right.png" alt="Cloud">
+        <img id="starsRight" src="images/stars-right.svg" alt="Stars">
+        <img class="clouds" style="z-index: 3; transform: translate(0px, -1.55909px);" src="images/cloud1.svg" alt="Clouds">
+        <img class="clouds" style="z-index: 6; transform: translate(0px, -2.33863px);" src="images/cloud2.svg" alt="Clouds">
+        <img class="clouds" style="z-index: 5; transform: translate(0px, -3.89772px);" src="images/cloud3.svg" alt="Clouds">
+        <img class="clouds" style="z-index: 6; transform: translate(0px, -3.89772px);" src="images/cloud4.svg" alt="Clouds">
     </body>
 </html>
