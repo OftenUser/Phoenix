@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Starting tests...</title>
+    <title>Starting Tests...</title>
     <script type="text/javascript">
         function redirectToTestPage() {
-            if(window.__TAURI__) {
-                __TAURI__.window.appWindow.setFocus().catch(console.error).finally(()=>{
-                    __TAURI__.cli.getMatches().then(matches=>{
+            if (window.__TAURI__) {
+                __TAURI__.window.appWindow.setFocus().catch(console.error).finally(() => {
+                    __TAURI__.cli.getMatches().then(matches => {
                         const testSuiteToExec = matches.args["run-tests"].value;
-                        if(testSuiteToExec){
+                        if (testSuiteToExec) {
                             location.href = `test/SpecRunner.html?spec=All&category=${testSuiteToExec}`;
                         } else {
                             location.href = `test/SpecRunner.html`;
